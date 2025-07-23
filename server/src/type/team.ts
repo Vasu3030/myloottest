@@ -1,5 +1,10 @@
 export interface ITeamStatsResponse {
   status: number;
+  error?: string;
+  page?: number;
+  pageSize?: number;
+  total?: number;
+  totalPages?: number;
   totalCoins?: number;
   users?: {
     userId: number;
@@ -7,12 +12,15 @@ export interface ITeamStatsResponse {
     amount: number;
     percentage: number;
   }[];
-  error?: string;
 }
 
 export interface ITeamsListResponse {
   status: number;
   error?: string;
+  page?: number;
+  pageSize?: number;
+  total?: number;
+  totalPages?: number;
   teams?: {
     id: number;
     name: string;
@@ -20,3 +28,4 @@ export interface ITeamsListResponse {
     activeUsers: number;
   }[];
 }
+

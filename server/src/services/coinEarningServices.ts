@@ -1,5 +1,5 @@
 import prisma from '../utils/prismaClient';
-import { ICreateCoinEarningResponse } from '../type/coinearning';
+import { ICreateCoinEarningResponse } from '../type/coinEarning';
 
 export async function addCoins(userId: number, teamId: number, amount: number): Promise<ICreateCoinEarningResponse> {
     try {

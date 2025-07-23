@@ -1,37 +1,46 @@
 import prisma from '../utils/prismaClient'
 import { Team } from '@prisma/client';
 import { ITeamStatsResponse, ITeamsListResponse } from "../type/team"
+import { buildPagination } from '../utils/pagination';
 
-
+// Get Team by id
 export async function getTeamById(teamId: number): Promise<Team | null> {
-    return prisma.team.findUnique({ where: { id: teamId } })
+  return prisma.team.findUnique({ where: { id: teamId } })
 }
 
 
-export async function fetchTeamStats(teamId: number, from?: Date, to?: Date): Promise<ITeamStatsResponse> {
-    const team = await getTeamById(teamId);
+// Team Stats service
+export async function fetchTeamStats(teamId: number, pageReq: number, pageSizeReq: number, from?: Date, to?: Date, ): Promise<ITeamStatsResponse> {
+  const team = await getTeamById(teamId);
+  
+  // Check if team exist or inactif
+  if (!team || team.status === false) {
+    return { status: 404, error: "Team not found" };
+  }
 
-    // Check if team exist or inactif
-    if (!team || team.status === false) {
-        return { status: 404, error: "Team not found" };
-    }
+  const total = await prisma.user.count({where: { status: true, teamId: teamId }})
+  // Create date condition
+  const dateCondition = (from && to)
+    ? `AND ce."timestamp" BETWEEN $2 AND $3`
+    : '';
 
-    // Create date condition
-    const dateCondition = (from && to)
-        ? `AND ce."timestamp" BETWEEN $2 AND $3`
-        : '';
+  const baseParams: any[] = [teamId];
+if (from && to) {
+  baseParams.push(from, to);
+}
 
-    const params: any[] = from && to
-        ? [teamId, from, to]
-        : [teamId];
+const { page, pageSize, params: paginationParams, paginationCondition } =
+  buildPagination(pageReq, pageSizeReq, baseParams.length);
 
-    const result = await prisma.$queryRawUnsafe<{
-        userId: number;
-        pseudo: string;
-        userAmount: bigint;
-        percentage: number;
-        totalAmount: bigint;
-    }[]>(`
+const finalParams = [...baseParams, ...paginationParams];
+
+  const result = await prisma.$queryRawUnsafe<{
+    userId: number;
+    pseudo: string;
+    userAmount: bigint;
+    percentage: number;
+    totalAmount: bigint;
+  }[]>(`
     WITH total AS (
       SELECT COALESCE(SUM(amount), 0) AS total_amount
       FROM "CoinEarning" ce
@@ -58,28 +67,40 @@ export async function fetchTeamStats(teamId: number, from?: Date, to?: Date): Pr
     WHERE u."teamId" = $1 AND u."status" = true
     GROUP BY u.id, u.pseudo, t.total_amount
     ORDER BY "userAmount" DESC
-    `, ...params);
+    ${paginationCondition}
+    `, ...finalParams);
 
-    // Case where team has no users
-    if (!result.length) {
-        return { status: 200, totalCoins: 0, users: [] };
-    }
+  // Case where team has no users
+  if (!result.length) {
+    return { status: 200, totalCoins: 0, users: [] };
+  }
 
-    const totalCoins = Number(result[0].totalAmount);
+  const totalCoins = Number(result[0].totalAmount);
 
-    const users = result.map(row => ({
-        userId: row.userId,
-        pseudo: row.pseudo,
-        amount: Number(row.userAmount),
-        percentage: row.percentage
-    }));
+  const users = result.map(row => ({
+    userId: row.userId,
+    pseudo: row.pseudo,
+    amount: Number(row.userAmount),
+    percentage: row.percentage
+  }));
 
-    return { status: 200, totalCoins, users };
+  return { 
+    status: 200, 
+    page,
+    pageSize,
+    total,
+    totalPages: Math.ceil(total / pageSize),
+    totalCoins, 
+    users };
 }
 
-export async function fetchTeamsList(): Promise<ITeamsListResponse> {
+// List Teams service
+export async function fetchTeamsList(pageReq: number, pageSizeReq: number): Promise<ITeamsListResponse> {
 
-   const result = await prisma.$queryRawUnsafe<{
+  const total = await prisma.team.count({where: { status: true }})
+  const { params, paginationCondition, page, pageSize } = buildPagination(pageReq, pageSizeReq);
+  
+  const result = await prisma.$queryRawUnsafe<{
     id: number
     name: string
     totalCoins: bigint
@@ -99,10 +120,10 @@ export async function fetchTeamsList(): Promise<ITeamsListResponse> {
     LEFT JOIN "User" u ON u."teamId" = t.id
     WHERE t.status = true
     GROUP BY t.id, t.name
-    ORDER BY "totalCoins" DESC;
-  `)
+    ORDER BY "totalCoins" DESC
+    ${paginationCondition};
+  `, ...params)
 
-  // Convertir BigInt en number
   const teams = result.map(row => ({
     id: row.id,
     name: row.name,
@@ -112,6 +133,10 @@ export async function fetchTeamsList(): Promise<ITeamsListResponse> {
 
   return {
     status: 200,
+    page,
+    pageSize,
+    total,
+    totalPages: Math.ceil(total / pageSize),
     teams
   }
 }

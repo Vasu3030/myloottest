@@ -6,13 +6,18 @@ export async function getTeamsList(req: Request, res: Response) {
 
     try {
 
-        const data = await fetchTeamsList()
+        const page = Number(req.query.page);
+        const pageSize = Number(req.query.pageSize);
+        
+        if ((page && isNaN(page)) || (pageSize && isNaN(pageSize))) return res.status(400).json({ status: 404, error: 'Invalid pagination' })
+        
+        const data = await fetchTeamsList(page, pageSize);
 
-        return res.status(data.status).json(data)
+        return res.status(data.status).json(data);
 
     } catch (error) {
-        console.error(error)
-        return res.status(500).json({ status: 500, error: 'Internal server error' })
+        console.error(error);
+        return res.status(500).json({ status: 500, error: 'Internal server error' });
     }
 }
 
@@ -22,8 +27,13 @@ export async function getTeamStats(req: Request, res: Response) {
         // Check if teamId is passed properly in params
         const teamId = Number(req.params.id)
         if (isNaN(teamId)) return res.status(404).json({ status: 404, error: 'Invalid team ID' })
+        
+        const page = Number(req.query.page);
+        const pageSize = Number(req.query.pageSize);
+        
+        if ((page && isNaN(page)) || (pageSize && isNaN(pageSize))) return res.status(400).json({ status: 404, error: 'Invalid pagination' })
 
-        const data = await fetchTeamStats(teamId)
+        const data = await fetchTeamStats(teamId, page, pageSize)
 
         return res.status(data.status).json(data)
 
@@ -40,6 +50,11 @@ export async function getTeamLeaderboard(req: Request, res: Response) {
         if (isNaN(teamId)) {
             return res.status(404).json({ status: 404, error: 'Invalid team ID' });
         }
+
+        const page = Number(req.query.page);
+        const pageSize = Number(req.query.pageSize);
+        
+        if ((page && isNaN(page)) || (pageSize && isNaN(pageSize))) return res.status(400).json({ status: 404, error: 'Invalid pagination' })
 
         const fromParam = req.query.from as string | undefined;
         const toParam = req.query.to as string | undefined;
@@ -64,7 +79,7 @@ export async function getTeamLeaderboard(req: Request, res: Response) {
             return res.status(400).json({ status: 400, error: 'from date must be earlier than to date' });
         }
 
-        const data = await fetchTeamStats(teamId, from, to);
+        const data = await fetchTeamStats(teamId, page, pageSize, from, to);
         return res.status(data.status).json(data);
 
     } catch (error) {
