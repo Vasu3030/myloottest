@@ -1,5 +1,20 @@
 import { Request, Response } from 'express'
-import { fetchTeamStats } from '../services/teamServices'
+import { fetchTeamsList, fetchTeamStats } from '../services/teamServices'
+
+
+export async function getTeamsList(req: Request, res: Response) {
+
+    try {
+
+        const data = await fetchTeamsList()
+
+        return res.status(data.status).json(data)
+
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ status: 500, error: 'Internal server error' })
+    }
+}
 
 export async function getTeamStats(req: Request, res: Response) {
 

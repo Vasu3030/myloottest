@@ -31,7 +31,7 @@ model Team {
   status    Boolean
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  members   User[]
+  users   User[]
   earnings  CoinEarning[]
 }
 

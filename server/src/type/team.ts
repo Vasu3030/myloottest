@@ -10,7 +10,7 @@ export interface ITeamStatsResponse {
   error?: string;
 }
 
-export interface ITeamsSummaryResponse {
+export interface ITeamsListResponse {
   status: number;
   error?: string;
   teams?: {

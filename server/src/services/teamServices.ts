@@ -1,6 +1,6 @@
 import prisma from '../utils/prismaClient'
 import { Team } from '@prisma/client';
-import { ITeamStatsResponse } from "../type/team"
+import { ITeamStatsResponse, ITeamsListResponse } from "../type/team"
 
 
 export async function getTeamById(teamId: number): Promise<Team | null> {
@@ -11,22 +11,20 @@ export async function getTeamById(teamId: number): Promise<Team | null> {
 export async function fetchTeamStats(teamId: number, from?: Date, to?: Date): Promise<ITeamStatsResponse> {
     const team = await getTeamById(teamId);
 
-    // Vérifie si l'équipe existe ou est inactive
+    // Check if team exist or inactif
     if (!team || team.status === false) {
         return { status: 404, error: "Team not found" };
     }
 
-    // Construit la condition de dates (uniquement si les deux sont fournis)
+    // Create date condition
     const dateCondition = (from && to)
         ? `AND ce."timestamp" BETWEEN $2 AND $3`
         : '';
 
-    // On prépare les paramètres SQL dynamiques
     const params: any[] = from && to
         ? [teamId, from, to]
         : [teamId];
 
-    // Query pour les stats
     const result = await prisma.$queryRawUnsafe<{
         userId: number;
         pseudo: string;
@@ -62,7 +60,7 @@ export async function fetchTeamStats(teamId: number, from?: Date, to?: Date): Pr
     ORDER BY "userAmount" DESC
     `, ...params);
 
-    // Cas où l'équipe n'a aucun user
+    // Case where team has no users
     if (!result.length) {
         return { status: 200, totalCoins: 0, users: [] };
     }
@@ -77,4 +75,43 @@ export async function fetchTeamStats(teamId: number, from?: Date, to?: Date): Pr
     }));
 
     return { status: 200, totalCoins, users };
+}
+
+export async function fetchTeamsList(): Promise<ITeamsListResponse> {
+
+   const result = await prisma.$queryRawUnsafe<{
+    id: number
+    name: string
+    totalCoins: bigint
+    activeUsers: number
+  }[]>(`
+    SELECT 
+      t.id,
+      t.name,
+      COALESCE((
+        SELECT SUM(ce.amount)
+        FROM "CoinEarning" ce
+        JOIN "User" u ON u.id = ce."userId"
+        WHERE ce."teamId" = t.id AND u.status = true AND u."teamId" = t.id
+      ), 0) AS "totalCoins",
+      COUNT(DISTINCT CASE WHEN u.status = true THEN u.id END) AS "activeUsers"
+    FROM "Team" t
+    LEFT JOIN "User" u ON u."teamId" = t.id
+    WHERE t.status = true
+    GROUP BY t.id, t.name
+    ORDER BY "totalCoins" DESC;
+  `)
+
+  // Convertir BigInt en number
+  const teams = result.map(row => ({
+    id: row.id,
+    name: row.name,
+    totalCoins: Number(row.totalCoins),
+    activeUsers: Number(row.activeUsers)
+  }))
+
+  return {
+    status: 200,
+    teams
+  }
 }
