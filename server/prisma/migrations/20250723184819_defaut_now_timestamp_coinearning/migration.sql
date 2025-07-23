@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "CoinEarning" ALTER COLUMN "timestamp" SET DEFAULT CURRENT_TIMESTAMP;
