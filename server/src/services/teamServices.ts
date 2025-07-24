@@ -1,5 +1,4 @@
 import prisma from '../utils/prismaClient'
-import { Team } from '@prisma/client';
 import { ITeamStatsResponse, ITeamsListResponse } from "../type/team"
 import { buildPagination } from '../utils/pagination';
 
@@ -75,7 +74,7 @@ export async function fetchTeamStats(teamId: number, pageReq: number, pageSizeRe
       COALESCE(SUM(ce.amount), 0) AS "userAmount",
       CASE
         WHEN t.total_amount = 0 THEN 0
-        ELSE ROUND((COALESCE(SUM(ce.amount), 0) * 100.0 / t.total_amount), 1)
+        ELSE ROUND((COALESCE(SUM(ce.amount), 0) * 100 / t.total_amount))
       END AS "percentage",
       t.total_amount AS "totalAmount"
     FROM "User" u
