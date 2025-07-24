@@ -35,6 +35,16 @@ export interface TeamStatsResponse {
   users?: User[];
 }
 
+export interface TeamInfoResponse {
+  status: boolean;
+  error?: string;
+  name: string;
+  users?: {
+    id: number,
+    pseudo: string
+  }[];
+}
+
 
 export const fetchTeams = (page = 1, pageSize = 10) =>
   apiFetch(`/teams?page=${page}&pageSize=${pageSize}`);
@@ -45,5 +55,5 @@ export const fetchTeamById = (teamId: string) =>
 export const fetchTeamStats = (teamId: string, page = 1, pageSize = 10) =>
   apiFetch(`/teams/${teamId}/stats?page=${page}&pageSize=${pageSize}`);
 
-export const fetchTeamLeaderboard = (teamId: string, from: string, to: string, page = 1, pageSize = 10) =>
-  apiFetch(`/teams/${teamId}/leaderboard?from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`);
+export const fetchTeamLeaderboard = (teamId: string, dateFilter: string, page = 1, pageSize = 10) =>
+  apiFetch(`/teams/${teamId}/leaderboard?${dateFilter}&page=${page}&pageSize=${pageSize}`);

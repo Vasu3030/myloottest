@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchTeams, fetchTeamStats, type TeamsListResponse, type TeamStatsResponse } from '../services/team';
+import { fetchTeamById, fetchTeams, fetchTeamStats, type TeamsListResponse, type TeamStatsResponse, type TeamInfoResponse, fetchTeamLeaderboard } from '../services/team';
 
 export const getTeams = (initialPage = 1, initialPageSize = 10) => {
     const [page, setPage] = useState(initialPage);
@@ -35,4 +35,42 @@ export const getTeamStats = (teamId: string, initialPage = 1, initialPageSize = 
     }, [page, pageSize]);
 
    return { data, page, setPage, setPageSize, loading, error };
+};
+
+
+export const getTeamLeaderboard = (teamId: string, dateFilter: string, initialPage = 1, initialPageSize = 10
+) => {
+  const [page, setPage] = useState(initialPage);
+  const [pageSize, setPageSize] = useState(initialPageSize);
+  const [data, setData] = useState<TeamStatsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchTeamLeaderboard(teamId, dateFilter, page, pageSize)
+      .then(setData)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [teamId, dateFilter, page, pageSize]);
+
+  return { data, page, setPage, setPageSize, loading, error };
+};
+
+
+
+export const getTeamInfo = (teamId: string) => {
+    const [teamInfo, setTeamInfo] = useState<TeamInfoResponse | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        setLoading(true);
+        fetchTeamById(teamId)
+            .then(setTeamInfo)
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
+    }, []);
+
+   return { teamInfo, loading, error };
 };
