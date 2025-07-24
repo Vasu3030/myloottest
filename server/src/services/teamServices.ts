@@ -4,35 +4,54 @@ import { ITeamStatsResponse, ITeamsListResponse } from "../type/team"
 import { buildPagination } from '../utils/pagination';
 
 // Get Team by id
-export async function fetchTeamById(teamId: number): Promise<Team | null> {
-  return prisma.team.findUnique({ where: { id: teamId } })
+export async function fetchTeamById(teamId: number) {
+  return prisma.team.findUnique({
+    where: {
+      id: teamId,
+    },
+    select: {
+      id: true,
+      name: true,
+      status: true,
+      users: {
+        where: {
+          status: true,
+        },
+        select: {
+          id: true,
+          pseudo: true,
+        },
+      },
+    },
+  });
 }
 
 
+
 // Team Stats service
-export async function fetchTeamStats(teamId: number, pageReq: number, pageSizeReq: number, from?: Date, to?: Date, ): Promise<ITeamStatsResponse> {
+export async function fetchTeamStats(teamId: number, pageReq: number, pageSizeReq: number, from?: Date, to?: Date,): Promise<ITeamStatsResponse> {
   const team = await fetchTeamById(teamId);
-  
+
   // Check if team exist or inactif
   if (!team || team.status === false) {
     return { status: 404, error: "Team not found" };
   }
 
-  const total = await prisma.user.count({where: { status: true, teamId: teamId }})
+  const total = await prisma.user.count({ where: { status: true, teamId: teamId } })
   // Create date condition
   const dateCondition = (from && to)
     ? `AND ce."timestamp" BETWEEN $2 AND $3`
     : '';
 
   const baseParams: any[] = [teamId];
-if (from && to) {
-  baseParams.push(from, to);
-}
+  if (from && to) {
+    baseParams.push(from, to);
+  }
 
-const { page, pageSize, params: paginationParams, paginationCondition } =
-  buildPagination(pageReq, pageSizeReq, baseParams.length);
+  const { page, pageSize, params: paginationParams, paginationCondition } =
+    buildPagination(pageReq, pageSizeReq, baseParams.length);
 
-const finalParams = [...baseParams, ...paginationParams];
+  const finalParams = [...baseParams, ...paginationParams];
 
   const result = await prisma.$queryRawUnsafe<{
     userId: number;
@@ -84,22 +103,23 @@ const finalParams = [...baseParams, ...paginationParams];
     percentage: row.percentage
   }));
 
-  return { 
-    status: 200, 
+  return {
+    status: 200,
     page,
     pageSize,
     total,
     totalPages: Math.ceil(total / pageSize),
-    totalCoins, 
-    users };
+    totalCoins,
+    users
+  };
 }
 
 // List Teams service
 export async function fetchTeamsList(pageReq: number, pageSizeReq: number): Promise<ITeamsListResponse> {
 
-  const total = await prisma.team.count({where: { status: true }})
+  const total = await prisma.team.count({ where: { status: true } })
   const { params, paginationCondition, page, pageSize } = buildPagination(pageReq, pageSizeReq);
-  
+
   const result = await prisma.$queryRawUnsafe<{
     id: number
     name: string
