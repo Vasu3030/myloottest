@@ -1,5 +1,9 @@
 @import "tailwindcss";
 :root {
+  --bg-color-gold: #ffb703;
+  --bg-color-silver: #5a7582;
+  --bg-color-bronze: #62470a;
+
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -7,4 +11,10 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
+}
+
+@theme inline {
+  --color-gold: var(--bg-color-gold);
+  --color-silver: var(--bg-color-silver);
+  --color-bronze: var(--bg-color-bronze);
 }

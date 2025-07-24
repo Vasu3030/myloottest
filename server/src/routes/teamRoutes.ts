@@ -1,9 +1,10 @@
 import express from 'express'
-import { getTeamStats, getTeamLeaderboard, getTeamsList } from '../controllers/teamController'
+import { getTeamStats, getTeamLeaderboard, getTeamsList, getTeamInfo } from '../controllers/teamController'
 
 const router = express.Router()
 
 router.get('/', getTeamsList)
+router.get('/:id', getTeamInfo)
 router.get('/:id/stats', getTeamStats)
 router.get('/:id/leaderboard', getTeamLeaderboard) 
 

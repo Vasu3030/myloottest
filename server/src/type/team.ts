@@ -29,3 +29,13 @@ export interface ITeamsListResponse {
   }[];
 }
 
+export interface ITeamInfoResponse {
+  status: number;
+  error?: string;
+  teams?: {
+    id: number;
+    name: string;
+    totalCoins: number;
+    activeUsers: number;
+  }[];
+}

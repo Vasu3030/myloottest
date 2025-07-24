@@ -4,14 +4,14 @@ import { ITeamStatsResponse, ITeamsListResponse } from "../type/team"
 import { buildPagination } from '../utils/pagination';
 
 // Get Team by id
-export async function getTeamById(teamId: number): Promise<Team | null> {
+export async function fetchTeamById(teamId: number): Promise<Team | null> {
   return prisma.team.findUnique({ where: { id: teamId } })
 }
 
 
 // Team Stats service
 export async function fetchTeamStats(teamId: number, pageReq: number, pageSizeReq: number, from?: Date, to?: Date, ): Promise<ITeamStatsResponse> {
-  const team = await getTeamById(teamId);
+  const team = await fetchTeamById(teamId);
   
   // Check if team exist or inactif
   if (!team || team.status === false) {
