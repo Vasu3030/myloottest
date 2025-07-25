@@ -1,11 +1,13 @@
 interface Props {
   pageSize: number;
   onPageSizeChange: (newPageSize: number) => void;
+  onPageChange: (newPage: number) => void;
 }
 
-export default function PaginationSelect({ pageSize, onPageSizeChange }: Props) {
+export default function PaginationSelect({ pageSize, onPageSizeChange, onPageChange }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onPageSizeChange(Number(e.target.value));
+    onPageChange(1);
   };
 
   return (
