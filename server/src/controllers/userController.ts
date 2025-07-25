@@ -8,8 +8,9 @@ export async function getUserInfo(req: Request, res: Response) {
         const userId = Number(req.params.id)
         if (isNaN(userId)) return res.status(404).json({ status: 404, error: 'Invalid user ID' })
 
+        // Call the service to fetch user info
         const data = await fetchUserById(userId)
-            
+
         return res.status(200).json(data)
 
     } catch (error) {

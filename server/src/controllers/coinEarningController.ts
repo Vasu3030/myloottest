@@ -5,7 +5,7 @@ export async function postCoinsToTeam(req: Request, res: Response) {
   try {
     const { userId, teamId, amount } = req.body;
 
-    // Vérifications des entrées
+    // Validate body parameters and return error if they are not numbers
     if (
       typeof userId !== 'number' ||
       typeof teamId !== 'number' ||
@@ -14,11 +14,12 @@ export async function postCoinsToTeam(req: Request, res: Response) {
       return res.status(400).json({ status: 400, error: 'userId, teamId et amount doivent être des nombres' });
     }
 
+    // Check if amount is greater than 0 if not return error
     if (amount <= 0) {
       return res.status(400).json({ status: 400, error: 'amount doit être supérieur à 0' });
     }
 
-    // Appel du service
+    // Call the service to add coins to the user and his team
     const data = await addCoins(userId, teamId, amount);
 
     return res.status(data.status).json(data);

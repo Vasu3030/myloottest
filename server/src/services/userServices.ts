@@ -1,5 +1,6 @@
 import prisma from '../utils/prismaClient'
 
+// Get user infos and his team infos
 async function getUserWithTeam(userId: number) {
   return prisma.user.findUnique({
     where: { id: userId },
@@ -17,6 +18,7 @@ async function getUserWithTeam(userId: number) {
   });
 }
 
+// Get the total coin earnings of a user in a team
 async function getUserEarningsSum(userId: number, teamId: number) {
   const result = await prisma.coinEarning.aggregate({
     where: { userId, teamId },
@@ -25,6 +27,7 @@ async function getUserEarningsSum(userId: number, teamId: number) {
   return result._sum.amount ?? 0;
 }
 
+// Get the total coin earnings of a team
 async function getTeamEarningsSum(teamId: number) {
   const result = await prisma.coinEarning.aggregate({
     where: { teamId },
@@ -33,6 +36,7 @@ async function getTeamEarningsSum(teamId: number) {
   return result._sum.amount ?? 0;
 }
 
+// Get user infos with team infos and coin earnings (total and percentage)
 export async function fetchUserById(userId: number) {
   const user = await getUserWithTeam(userId);
   if (!user) return { status: 404, error: 'User not found' };

@@ -4,13 +4,15 @@ import { ICreateCoinEarningResponse } from '../type/coinEarning';
 export async function addCoins(userId: number, teamId: number, amount: number): Promise<ICreateCoinEarningResponse> {
     try {
 
+        // Check if user exist and belongs to the team
         const checkExist = await prisma.user.findUnique({
             where: { 
                 id: userId,
                 teamId: teamId
              },
         });
-
+        
+        // If user or team does not exist, return error
         if (!checkExist) {
             return { status: 404, error: "Team or user not found" };
         }

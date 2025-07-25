@@ -8,7 +8,7 @@ const prisma = new PrismaClient()
 async function main() {
   for (let i = 0; i < teamNames.length; i++) {
 
-    // Création des teams
+    // Create teams
     const team = await prisma.team.create({
       data: {
         name: teamNames[i],
@@ -16,8 +16,9 @@ async function main() {
       }
     })
 
-    // Création des users pour chaque team
-    const pseudoList = generateUsersForTeam(i)
+    // For each team, create users with unique pseudo
+    // Change the number of users per team if needed
+    const pseudoList = generateUsersForTeam(i, 12) // 12 users per team
     const createdUsers = await Promise.all(
       pseudoList.map(pseudo =>
         prisma.user.create({
@@ -30,7 +31,7 @@ async function main() {
       )
     )
 
-    // Création des earnings pour chaque user
+    // For each user, create coin earnings
     const earningsData = generateCoinEarnings(
       createdUsers.map(u => u.id),
       team.id
