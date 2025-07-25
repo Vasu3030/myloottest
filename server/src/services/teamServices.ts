@@ -44,7 +44,7 @@ export async function fetchTeamStats(teamId: number, pageReq: number, pageSizeRe
   if (!team || team.status === false) {
     return { status: 404, error: "Team not found" };
   }
-
+  
   const total = await prisma.user.count({ where: { status: true, teamId: teamId } })
   // Create date condition
   const dateCondition = (from && to)
@@ -113,6 +113,7 @@ export async function fetchTeamStats(teamId: number, pageReq: number, pageSizeRe
 
   return {
     status: 200,
+    name: team.name,
     page,
     pageSize,
     total,

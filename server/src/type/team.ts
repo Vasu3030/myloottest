@@ -1,5 +1,6 @@
 export interface ITeamStatsResponse {
   status: number;
+  name?: string;
   error?: string;
   page?: number;
   pageSize?: number;

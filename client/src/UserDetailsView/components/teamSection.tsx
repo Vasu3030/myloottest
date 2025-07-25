@@ -8,6 +8,7 @@ interface Props {
 
 const TeamSection = ({ id, name }: Props) => {
     return (
+        // Link to the team view with the team ID
         <Link
             to={`/team/${id}`}
             className="flex flex-row justify-around items-center p-10 bg-gray-800 w-[20rem] h-[8rem] rounded-2xl hover:ring-2 hover:ring-amber-200 cursor-pointer text-amber-300 hover:text-amber-200">

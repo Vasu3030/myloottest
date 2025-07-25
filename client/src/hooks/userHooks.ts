@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchUserById, type UserInfoResponse, addCoinsToUser } from '../services/user';
 
-// Custom hook to fetch user information by ID
+// Hook to fetch user information by ID
 export const getUserInfo = (userId: string, amount: number) => {
     const [userInfo, setUserInfo] = useState<UserInfoResponse | null>(null);
     const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ export const getUserInfo = (userId: string, amount: number) => {
    return { userInfo, loading, error };
 };
 
-// Custom hook to add coins to a user
+// Hook to add coins to a user
 export const useAddCoins = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);

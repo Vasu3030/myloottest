@@ -12,10 +12,10 @@ export interface UserInfoResponse {
   percentage: number
 }
 
-// Fetch user information by ID
+// API User information by ID
 export const fetchUserById = (userId: string) =>
   apiFetch(`/users/${userId}`);
 
-// Add coins to a user
+// API Add coins to a user
 export const addCoinsToUser = (userId: number, teamId: number, amount: number) =>
   apiPost('/coins', { userId, teamId, amount });

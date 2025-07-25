@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { getTeamStats, getTeamInfo, getTeamLeaderboard } from '../hooks/teamHooks';
+import { getTeamStats, getTeamLeaderboard } from '../hooks/teamHooks';
 import Pagination from '../components/Pagination';
 import UserRow from "./components/userRow";
 import DateFilter from "./components/dateFilter";
@@ -9,23 +9,26 @@ import { useState } from "react";
 import { getRankData } from "../utils/rankUtils";
 
 const TeamView = () => {
-    const params = useParams();
     const [dateFilter, setDateFilter] = useState("");
-    if (!params.teamId) return <ErrorPage message={"Page not found"} status='404' />;
-    
-    const { teamInfo } = getTeamInfo(params.teamId);
 
-    const { data, page, setPage, setPageSize, error, loading } = dateFilter ?
+    // Get teamId from URL parameters and return 404 if teamId is not provided
+    const params = useParams();
+    if (!params.teamId) return <ErrorPage message={"Page not found"} status='404' />;
+
+    // Fetch team stats or leaderboard based on date filter
+    // If dateFilter is set, fetch leaderboard, otherwise fetch stats
+    const { data, page, setPage, setPageSize, loading } = dateFilter ?
         getTeamLeaderboard(params.teamId, dateFilter, 1, 10)
         : getTeamStats(params.teamId, 1, 10);
 
-    if ((!data || !teamInfo) && !loading) return <ErrorPage message="No teams found" status='404' />;
-    if (error) return <ErrorPage message={error} status='400' />;
+    // If no data is found return an error page
+    if (!data?.name && !loading) return <ErrorPage message="No teams found" status='400' />;
 
     return (
         <div className='flex flex-col items-center'>
-            {teamInfo && data && <>
-            <TeamHeader name={teamInfo.name} totalCoins={teamInfo.totalCoins} />
+            {data && data.name && <>
+                {/* Team Header with name and total coins */}
+                <TeamHeader name={data.name} totalCoins={data.totalCoins} />
                 {data.users && data.users.length > 0 &&
                     <>
                         {/* Date filter  */}

@@ -5,6 +5,7 @@ import FormButton from "../../components/FormButton";
 import { formatDate } from "../../utils/date";
 
 interface Props {
+    // Function to set the date filter in the parent component
     setDateFilter: React.Dispatch<React.SetStateAction<string>>;
 }
 
@@ -14,17 +15,17 @@ const DateFilter = ({ setDateFilter }: Props) => {
     const [error, setError] = useState<string | null>(null);
 
     const applyFilter = () => {
-    if (!startDate || !endDate || (endDate < startDate)) {
-        setDateFilter("");
-        setError("Dates invalides")
-    }
-    else {
-        const from = formatDate(startDate);
-        const to = formatDate(endDate);
-        setError(null)
-        setDateFilter(`from=${from}&to=${to}`);
-    }
-};
+        if (!startDate || !endDate || (endDate < startDate)) {
+            setDateFilter("");
+            setError("Dates invalides")
+        }
+        else {
+            const from = formatDate(startDate);
+            const to = formatDate(endDate);
+            setError(null)
+            setDateFilter(`from=${from}&to=${to}`);
+        }
+    };
 
     const clearFilter = () => {
         setError(null)
@@ -37,6 +38,7 @@ const DateFilter = ({ setDateFilter }: Props) => {
         <div className="flex flex-col lg:flex-row justify-center items-center gap-2">
             {error && <p className="text-red-500">{error}</p>}
             <div className="flex gap-1">
+                {/* Date pickers for selecting start and end dates */}
                 <DatePicker
                     selected={startDate}
                     onChange={(date) => setStartDate(date)}
