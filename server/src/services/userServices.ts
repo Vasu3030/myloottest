@@ -1,4 +1,3 @@
-import { stat } from 'fs';
 import prisma from '../utils/prismaClient'
 
 async function getUserWithTeam(userId: number) {
@@ -41,7 +40,7 @@ export async function fetchUserById(userId: number) {
   const earningsSum = await getUserEarningsSum(userId, user.team.id);
   const teamEarningsSum = await getTeamEarningsSum(user.team.id);
 
-  const contributionPercentage =
+  const percentage =
   teamEarningsSum > 0
     ? Math.round(earningsSum * 100 / teamEarningsSum)
     : 0;
@@ -49,6 +48,6 @@ export async function fetchUserById(userId: number) {
   return {
     ...user,
     earningsSum,
-    contributionPercentage,
+    percentage,
   };
 }

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import FormButton from "../../components/FormButton";
+import { formatDate } from "../../utils/date";
 
 interface Props {
     setDateFilter: React.Dispatch<React.SetStateAction<string>>;
@@ -12,18 +14,17 @@ const DateFilter = ({ setDateFilter }: Props) => {
     const [error, setError] = useState<string | null>(null);
 
     const applyFilter = () => {
-        if (!startDate || !endDate || (endDate < startDate)) {
-            setDateFilter("");
-            setError("Dates invalides")
-            return;
-        }
-
-        // Convert to pass it in url
-        const from = startDate.toISOString().split("T")[0];
-        const to = endDate.toISOString().split("T")[0];
+    if (!startDate || !endDate || (endDate < startDate)) {
+        setDateFilter("");
+        setError("Dates invalides")
+    }
+    else {
+        const from = formatDate(startDate);
+        const to = formatDate(endDate);
         setError(null)
         setDateFilter(`from=${from}&to=${to}`);
-    };
+    }
+};
 
     const clearFilter = () => {
         setError(null)
@@ -58,18 +59,12 @@ const DateFilter = ({ setDateFilter }: Props) => {
 
             {/* Apply and clear filter */}
             <div className="flex gap-1">
-                <button
+                <FormButton
                     onClick={applyFilter}
-                    className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 cursor-pointer"
-                >
-                    Apply
-                </button>
-                <button
+                    label="Apply" />
+                <FormButton
                     onClick={clearFilter}
-                    className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 cursor-pointer"
-                >
-                    Clear
-                </button>
+                    label="Clear" />
             </div>
         </div>
     );

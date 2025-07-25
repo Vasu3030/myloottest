@@ -4,18 +4,16 @@ import { buildPagination } from '../utils/pagination';
 
 // Get Team by id
 export async function fetchTeamById(teamId: number) {
-  return prisma.team.findUnique({
-    where: {
-      id: teamId,
-    },
+  
+  // Get team information with active users
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
     select: {
       id: true,
       name: true,
       status: true,
       users: {
-        where: {
-          status: true,
-        },
+        where: { status: true },
         select: {
           id: true,
           pseudo: true,
@@ -23,6 +21,17 @@ export async function fetchTeamById(teamId: number) {
       },
     },
   });
+
+  // Get total coins for the team
+  const coinsSumResult = await prisma.coinEarning.aggregate({
+    where: { teamId },
+    _sum: { amount: true },
+  });
+
+  return {
+    totalCoins: coinsSumResult._sum.amount ?? 0,
+    ...team,
+  };
 }
 
 

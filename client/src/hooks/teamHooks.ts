@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchTeamById, fetchTeams, fetchTeamStats, type TeamsListResponse, type TeamStatsResponse, type TeamInfoResponse, fetchTeamLeaderboard } from '../services/team';
 
+// Custom hook to fetch teams list with pagination
 export const getTeams = (initialPage = 1, initialPageSize = 10) => {
     const [page, setPage] = useState(initialPage);
     const [pageSize, setPageSize] = useState(initialPageSize);
@@ -19,6 +20,7 @@ export const getTeams = (initialPage = 1, initialPageSize = 10) => {
    return { data, page, setPage, setPageSize, loading, error };
 };
 
+// Custom hook to fetch team stats with pagination
 export const getTeamStats = (teamId: string, initialPage = 1, initialPageSize = 10) => {
     const [page, setPage] = useState(initialPage);
     const [pageSize, setPageSize] = useState(initialPageSize);
@@ -37,7 +39,7 @@ export const getTeamStats = (teamId: string, initialPage = 1, initialPageSize = 
    return { data, page, setPage, setPageSize, loading, error };
 };
 
-
+// Custom hook to fetch team leaderboard with date filter
 export const getTeamLeaderboard = (teamId: string, dateFilter: string, initialPage = 1, initialPageSize = 10
 ) => {
   const [page, setPage] = useState(initialPage);
@@ -58,7 +60,7 @@ export const getTeamLeaderboard = (teamId: string, dateFilter: string, initialPa
 };
 
 
-
+// Custom hook to fetch team information by ID
 export const getTeamInfo = (teamId: string) => {
     const [teamInfo, setTeamInfo] = useState<TeamInfoResponse | null>(null);
     const [loading, setLoading] = useState(true);

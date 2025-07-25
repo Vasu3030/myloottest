@@ -10,7 +10,7 @@ export default function TeamsListPage() {
     if (!data && !loading) return <ErrorPage message="No teams found" status='404' />;
 
     return (
-        <div className='flex flex-col items-center p-10'>
+        <div className='flex flex-col items-center'>
             <h1 className='text-amber-300 font-bold text-3xl mb-10 mt-5'>TEAMS LADDER</h1>
             {data && <>
                 {/* List of teams */}

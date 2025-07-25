@@ -21,6 +21,7 @@ export default function Pagination({
     const startItem = (page - 1) * pageSize + 1;
     const endItem = Math.min(page * pageSize, totalItems);
 
+    // Handle previous and next page actions
     const handlePrev = () => {
         if (page > 1) onPageChange(page - 1);
     };
@@ -29,28 +30,40 @@ export default function Pagination({
         if (page < totalPages) onPageChange(page + 1);
     };
 
+    // Handle page size change
     const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         onPageSizeChange(Number(e.target.value));
     };
 
+
     const renderPageNumbers = () => {
         const pages = [];
+
+        // Loop through all pages from 1 to totalPages
         for (let i = 1; i <= totalPages; i++) {
+
+            // Show page button if:
+            // - It's the first page
+            // - It's the last page
+            // - It's the current page OR one page before/after the current page
             if (i === 1 || i === totalPages || Math.abs(i - page) <= 1) {
                 pages.push(
                     <button
                         key={i}
                         onClick={() => onPageChange(i)}
-                        className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-gray-300 ring-inset focus:z-20 focus:outline-offset-0  cursor-pointer ${
-                            i === page
-                                ? 'z-10 bg-gray-600 text-white focus-visible:outline-indigo-600'
-                                : 'hover:bg-gray-500'
-                        }`}
+                        className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-gray-300 ring-inset focus:z-20 focus:outline-offset-0 cursor-pointer ${i === page
+                                ? 'z-10 bg-gray-600 text-white focus-visible:outline-indigo-600' // Highlight current page
+                                : 'hover:bg-gray-500' // Hover effect for other pages
+                            }`}
                     >
                         {i}
                     </button>
                 );
-            } else if (i === page - 2 || i === page + 2) {
+            }
+
+            // Show "..." (ellipsis) when there is a gap between the current visible pages
+            // Example: page 1 ... 4 5 6 ... 10
+            else if (i === page - 2 || i === page + 2) {
                 pages.push(
                     <span
                         key={`ellipsis-${i}`}
@@ -61,8 +74,11 @@ export default function Pagination({
                 );
             }
         }
+
+        // Return the array of page buttons and ellipsis
         return pages;
     };
+
 
     return (
         <div className="flex items-center justify-between px-4 py-3 sm:px-6">

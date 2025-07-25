@@ -2,9 +2,9 @@ import { useParams } from "react-router-dom"
 import { getTeamStats, getTeamInfo, getTeamLeaderboard } from '../hooks/teamHooks';
 import Pagination from '../components/Pagination';
 import UserRow from "./components/userRow";
-import LinkButton from "../components/LinkButton";
 import DateFilter from "./components/dateFilter";
 import ErrorPage from '../components/ErrorPage';
+import TeamHeader from "./components/teamHeader";
 import { useState } from "react";
 import { getRankData } from "../utils/rankUtils";
 
@@ -13,7 +13,6 @@ const TeamView = () => {
     const [dateFilter, setDateFilter] = useState("");
     if (!params.teamId) return <ErrorPage message={"Page not found"} status='404' />;
     
-
     const { teamInfo } = getTeamInfo(params.teamId);
 
     const { data, page, setPage, setPageSize, error, loading } = dateFilter ?
@@ -24,10 +23,9 @@ const TeamView = () => {
     if (error) return <ErrorPage message={error} status='400' />;
 
     return (
-        <div className='flex flex-col items-center p-10'>
-            <LinkButton to="/" label="Home" />
+        <div className='flex flex-col items-center'>
             {teamInfo && data && <>
-                <h1 className='text-amber-300 font-bold text-3xl mb-10 mt-5'>{teamInfo.name}</h1>
+            <TeamHeader name={teamInfo.name} totalCoins={teamInfo.totalCoins} />
                 {data.users && data.users.length > 0 &&
                     <>
                         {/* Date filter  */}

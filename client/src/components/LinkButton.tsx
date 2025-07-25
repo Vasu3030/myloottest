@@ -9,7 +9,7 @@ const LinkButton = ({ to, label }: Props) => {
     return (
         <Link
             to={to}
-            className="fixed top-4 left-4 flex items-center px-3 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600 shadow-md transition"
+            className=" top-4 left-4 px-3 py-2 rounded-lg font-bold bg-gray-700 text-white hover:bg-gray-600 shadow-md transition w-full"
         >
             {label}
         </Link>
