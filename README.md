@@ -130,7 +130,7 @@ Optimisation des requêtes : la présence de team_id dans coin_earnings évite d
 
 - coin_earnings.timestamp
 
-Les colonnes ci dessus seront souvent utilisé pour des clauses `WHERE` d'où l'indexation
+Les colonnes ci dessus seront souvent utilisées pour des clauses `WHERE` d'où l'indexation
 
 ## 2.  Prisma
 
@@ -146,7 +146,7 @@ Cela permet de conserver des performances élevées tout en profitant de Prisma 
 ## 3. Pagination
 
 Pour éviter de charger trop de données en mémoire et améliorer la performance des endpoints listant des utilisateurs ou des gains,  
-la pagination est appliquée via des paramètres `page` et `pageSize`, elle reste facultatif.  
+la pagination est appliquée via des paramètres `page` et `pageSize`, ils restent facultatifs.  
 
 - Ces paramètres sont **validés** pour éviter des valeurs invalides.
 - Cela réduit la charge sur la base en cas d'un grand nombre de données (scalable).
@@ -154,7 +154,7 @@ la pagination est appliquée via des paramètres `page` et `pageSize`, elle rest
 
 # API Endpoints
 
-## 1. Get team stats
+## 1. Liste des users d'une équipe avec leur contribution en coins
 
 - **Method**: GET
     
@@ -162,66 +162,19 @@ la pagination est appliquée via des paramètres `page` et `pageSize`, elle rest
     
 - **Query Paramètres (facultatif)**:
     
-    - `page` (number): Le numéro de page de.
+    - `page` (number): Le numéro de page.
         
     - `pageSize` (number): Le nombre de résultat par page.
         
 
-### Reponse
+### Réponse
 
 - **Status Code**: 200 OK
     
 - **Content-Type**: application/json
     
 
-#### Reponse JSON
-
-``` json
-{
-  "status": integer,
-  "name": string,
-  "page": integer,
-  "pageSize": integer,
-  "total": integer,
-  "totalPages": integer,
-  "totalCoins": integer,
-  "users": [
-    {
-      "userId": integer,
-      "pseudo": string,
-      "amount": number,
-      "percentage": number
-    }
-  ]
-}
-
- ```
-
-
- ## 2. Get team leaderboard
-
-- **Method:** GET  
-
-- **URL:** `http://localhost:3000/teams/{teamId}/leaderboard`
-
-- **Query Paramètres (facultatif pour page et pageSize)**:
-
-- `from` (string, required): Date de début `YYYY-MM-DD` format.
-    
-- `to` (string, required): Date de fin `YYYY-MM-DD` format.
-    
-- `page` (number): Le numéro de page de.
-        
-- `pageSize` (number): Le nombre de résultat par page.
-    
-
-### Reponse
-
-- **Status Code**: 200 OK
-    
-- **Content-Type**: application/json
-
-#### Reponse JSON
+#### Réponse JSON
 
 ``` json
 {
@@ -244,7 +197,54 @@ la pagination est appliquée via des paramètres `page` et `pageSize`, elle rest
 
  ```
 
- ## 3. Get Teams
+
+ ## 2. Liste des users d'une équipe avec leur contribution en coins pendant une période
+
+- **Method:** GET  
+
+- **URL:** `http://localhost:3000/teams/{teamId}/leaderboard`
+
+- **Query Paramètres (facultatif pour page et pageSize)**:
+
+- `from` (string, required): Date de début `YYYY-MM-DD` format.
+    
+- `to` (string, required): Date de fin `YYYY-MM-DD` format.
+    
+- `page` (number): Le numéro de page.
+        
+- `pageSize` (number): Le nombre de résultat par page.
+    
+
+### Réponse
+
+- **Status Code**: 200 OK
+    
+- **Content-Type**: application/json
+
+#### Réponse JSON
+
+``` json
+{
+  "status": number,
+  "name": string,
+  "page": number,
+  "pageSize": number,
+  "total": number,
+  "totalPages": number,
+  "totalCoins": number,
+  "users": [
+    {
+      "userId": number,
+      "pseudo": string,
+      "amount": number,
+      "percentage": number
+    }
+  ]
+}
+
+ ```
+
+ ## 3. Liste de toutes les teams avec le nombre de coins total et de membres
 
 
 - **Method:** GET  
@@ -253,18 +253,18 @@ la pagination est appliquée via des paramètres `page` et `pageSize`, elle rest
 
 - **Query Paramètres (facultatif)**:
     
-- `page` (number): Le numéro de page de.
+- `page` (number): Le numéro de page.
         
 - `pageSize` (number): Le nombre de résultat par page.
     
 
-### Reponse
+### Réponse
 
 - **Status Code**: 200 OK
     
 - **Content-Type**: application/json
 
-#### Reponse JSON
+#### Réponse JSON
 
 ``` json
 {
@@ -285,7 +285,7 @@ la pagination est appliquée via des paramètres `page` et `pageSize`, elle rest
 
  ```
 
- ## 4. Get User Details
+ ## 4. Informations du user avec sa contribution et son équipe
 
 - **Method**: GET
     
@@ -303,14 +303,14 @@ la pagination est appliquée via des paramètres `page` et `pageSize`, elle rest
 
 ``` json
 {
-  "id": integer,
+  "id": number,
   "pseudo": string,
   "status": boolean,
   "team": {
-    "id": integer,
+    "id": number,
     "name": string,
-    "totalCoins": integer,
-    "activeUsers": integer
+    "totalCoins": number,
+    "activeUsers": number
   },
   "earningsSum": number,
   "percentage": number
@@ -318,7 +318,7 @@ la pagination est appliquée via des paramètres `page` et `pageSize`, elle rest
 
  ```
 
- ## 5. Add Coin
+ ## 5. Ajout de coins à un user
 
 - **Method**: POST
 
@@ -347,13 +347,13 @@ la pagination est appliquée via des paramètres `page` et `pageSize`, elle rest
 
  ```
 
-### Reponse
+### Réponse
 
 - **Status Code**: 201 CREATED
     
 - **Content-Type**: application/json
 
-#### Reponse JSON
+#### Réponse JSON
 
 ``` json
 {
