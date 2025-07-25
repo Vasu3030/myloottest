@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { fetchTeamsList, fetchTeamStats, fetchTeamById } from '../services/teamServices';
+import { fetchTeamsList, fetchTeamStats, fetchTeamById, fetchTeamTimeline } from '../services/teamServices';
 
 // List all teams with pagination
 export async function getTeamsList(req: Request, res: Response) {
@@ -62,6 +62,24 @@ export async function getTeamLeaderboard(req: Request, res: Response) {
 
         // Call the service to fetch team stats with date range and pagination
         const data = await fetchTeamStats(teamId, page, pageSize, from, to);
+
+        return res.status(data.status).json(data);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ status: 500, error: 'Internal server error' });
+    }
+}
+
+
+// Fetch team's gains during a specific period
+export async function getTeamTimeline(req: Request, res: Response) {
+    try {
+        // Extract teamId from request parameters and dates from validated dates
+        const { from, to } = (req as any).validatedDates;
+        const team = (req as any).team;
+
+        // Call the service to fetch teams list with pagination
+        const data = await fetchTeamTimeline(team.id, from, to);
 
         return res.status(data.status).json(data);
     } catch (error) {

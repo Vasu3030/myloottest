@@ -1,5 +1,5 @@
 import express from 'express'
-import { getTeamStats, getTeamLeaderboard, getTeamsList, getTeamInfo } from '../controllers/teamController'
+import { getTeamStats, getTeamLeaderboard, getTeamsList, getTeamInfo, getTeamTimeline } from '../controllers/teamController'
 import { validatePagination } from '../middlewares/validatePagination';
 import { validateTeamId } from '../middlewares/validateTeam'   ;   
 import { validateDateRange } from '../middlewares/validateDate';
@@ -17,5 +17,8 @@ router.get('/:id/stats', validateTeamId, validatePagination, getTeamStats)
 
 // Get team stats , total coins, list of members and info. With Date Range
 router.get('/:id/leaderboard', validateTeamId, validatePagination, validateDateRange, getTeamLeaderboard) 
+
+// Get team gains during a specific period for chart
+router.get('/:id/timeline', validateTeamId, validateDateRange, getTeamTimeline) 
 
 export default router

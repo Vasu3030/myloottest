@@ -180,3 +180,32 @@ export async function fetchTeamsList(pageReq: number, pageSizeReq: number): Prom
     teams
   }
 }
+
+
+// Service to get team gains during a specific period
+export async function fetchTeamTimeline(teamId: number, from: Date, to: Date) {
+
+  const params = [teamId, from, to];
+
+  // Use of raw query to maximize performance
+  // This query retrieves the total coins earned by the team during the specified period
+  // return 0 if no coins were earned for a specific date
+  const result = await prisma.$queryRawUnsafe<{ date: string; coins: number }[]>(`
+    SELECT 
+      d::date AS date,
+      COALESCE(SUM(c."amount")::int, 0) AS coins
+    FROM generate_series($2::date, $3::date, '1 day') d
+    LEFT JOIN "CoinEarning" c 
+      ON DATE(c."timestamp") = d 
+      AND c."teamId" = $1
+    GROUP BY d
+    ORDER BY d ASC;
+  `, ...params)
+
+  return {
+    status: 200,
+    team: result,
+    from: from,
+    to: to
+  }
+}
