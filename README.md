@@ -121,8 +121,8 @@ Optimisation des requêtes : la présence de team_id dans coin_earnings évite d
 - Une **team** peut avoir **plusieurs coin_earnings** (`one-to-many`).
 
 
-## 3. Gestion des performances
-### Indexation
+# Gestion des performances
+## 1. Indexation
 
 - coin_earnings.user_id
 
@@ -132,7 +132,7 @@ Optimisation des requêtes : la présence de team_id dans coin_earnings évite d
 
 Les colonnes ci dessus seront souvent utilisé pour des clauses `WHERE` d'où l'indexation
 
-### Prisma
+## 2.  Prisma
 
 On utilise Prisma comme ORM car il apporte plusieurs avantages de performance et de productivité :
 
@@ -143,10 +143,228 @@ Cependant, dans certains cas où **Prisma ne supporte pas certaines fonctions SQ
 j’ai recours à `prisma.$queryRaw` pour exécuter directement du SQL brut et **laisser la base effectuer le calcul**.  
 Cela permet de conserver des performances élevées tout en profitant de Prisma pour le reste du projet.
 
-### Pagination
+## 3. Pagination
 
 Pour éviter de charger trop de données en mémoire et améliorer la performance des endpoints listant des utilisateurs ou des gains,  
 la pagination est appliquée via des paramètres `page` et `pageSize`, elle reste facultatif.  
 
 - Ces paramètres sont **validés** pour éviter des valeurs invalides.
 - Cela réduit la charge sur la base en cas d'un grand nombre de données (scalable).
+
+
+# API Endpoints
+
+## 1. Get team stats
+
+- **Method**: GET
+    
+- **URL**: `http://localhost:3000/teams/{teamId}/stats`
+    
+- **Query Paramètres (facultatif)**:
+    
+    - `page` (number): Le numéro de page de.
+        
+    - `pageSize` (number): Le nombre de résultat par page.
+        
+
+### Reponse
+
+- **Status Code**: 200 OK
+    
+- **Content-Type**: application/json
+    
+
+#### Reponse JSON
+
+``` json
+{
+  "status": integer,
+  "name": string,
+  "page": integer,
+  "pageSize": integer,
+  "total": integer,
+  "totalPages": integer,
+  "totalCoins": integer,
+  "users": [
+    {
+      "userId": integer,
+      "pseudo": string,
+      "amount": number,
+      "percentage": number
+    }
+  ]
+}
+
+ ```
+
+
+ ## 2. Get team leaderboard
+
+- **Method:** GET  
+
+- **URL:** `http://localhost:3000/teams/{teamId}/leaderboard`
+
+- **Query Paramètres (facultatif pour page et pageSize)**:
+
+- `from` (string, required): Date de début `YYYY-MM-DD` format.
+    
+- `to` (string, required): Date de fin `YYYY-MM-DD` format.
+    
+- `page` (number): Le numéro de page de.
+        
+- `pageSize` (number): Le nombre de résultat par page.
+    
+
+### Reponse
+
+- **Status Code**: 200 OK
+    
+- **Content-Type**: application/json
+
+#### Reponse JSON
+
+``` json
+{
+  "status": number,
+  "name": string,
+  "page": number,
+  "pageSize": number,
+  "total": number,
+  "totalPages": number,
+  "totalCoins": number,
+  "users": [
+    {
+      "userId": number,
+      "pseudo": string,
+      "amount": number,
+      "percentage": number
+    }
+  ]
+}
+
+ ```
+
+ ## 3. Get Teams
+
+
+- **Method:** GET  
+
+- **URL:** `http://localhost:3000/teams`
+
+- **Query Paramètres (facultatif)**:
+    
+- `page` (number): Le numéro de page de.
+        
+- `pageSize` (number): Le nombre de résultat par page.
+    
+
+### Reponse
+
+- **Status Code**: 200 OK
+    
+- **Content-Type**: application/json
+
+#### Reponse JSON
+
+``` json
+{
+  "status": number,
+  "page": number,
+  "pageSize": number,
+  "total": number,
+  "totalPages": number,
+  "teams": [
+    {
+      "id": number,
+      "name": string,
+      "totalCoins": number,
+      "activeUsers": number
+    }
+  ]
+}
+
+ ```
+
+ ## 4. Get User Details
+
+- **Method**: GET
+    
+- **URL**: `http://localhost:3000/users/{userId}`
+    
+
+### Response
+
+- **Status Code**: 200 OK
+    
+- **Content-Type**: application/json
+    
+
+#### Response JSON
+
+``` json
+{
+  "id": integer,
+  "pseudo": string,
+  "status": boolean,
+  "team": {
+    "id": integer,
+    "name": string,
+    "totalCoins": integer,
+    "activeUsers": integer
+  },
+  "earningsSum": number,
+  "percentage": number
+}
+
+ ```
+
+ ## 5. Add Coin
+
+- **Method**: POST
+
+- **URL**: `http://localhost:3000/coins/`
+    
+- **Content-Type**: application/json
+    
+
+- **Body Paramètres**:
+
+- **userId** (number, required)
+    
+- **teamId** (number, required)
+    
+- **amount** (number, required) > 0
+    
+
+**Exemple Body:**
+
+``` json
+{
+  "userId": 121,
+  "teamId": 11,
+  "amount": 1
+}
+
+ ```
+
+### Reponse
+
+- **Status Code**: 201 CREATED
+    
+- **Content-Type**: application/json
+
+#### Reponse JSON
+
+``` json
+{
+  "status": number,
+  "data": {
+    "id": number,
+    "userId": number,
+    "teamId": number,
+    "amount": number,
+    "timestamp": Date
+  }
+}
+
+ ```
