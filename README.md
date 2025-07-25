@@ -10,11 +10,6 @@
   - [Prisma](#2-prisma)
   - [Pagination](#3-pagination)
 - [API Endpoints](#api-endpoints)
-  - [Get team stats](#1-get-team-stats)
-  - [Get team leaderboard](#2-get-team-leaderboard)
-  - [Get teams](#3-get-teams)
-  - [Get user details](#4-get-user-details)
-  - [Add coin](#5-add-coin)
 
 
  # Présentation
@@ -163,7 +158,7 @@ Optimisation des requêtes : la présence de team_id dans coin_earnings évite d
 
 Les colonnes ci dessus seront souvent utilisées pour des clauses `WHERE` d'où l'indexation
 
-## 2.  Prisma
+## 2. Prisma
 
 On utilise Prisma comme ORM car il apporte plusieurs avantages de performance et de productivité :
 
