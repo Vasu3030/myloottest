@@ -99,7 +99,29 @@ Historisation : coin_earnings conserve chaque gain avec sa date.
 
 Optimisation des requêtes : la présence de team_id dans coin_earnings évite des jointures coûteuses sur users pour calculer les totaux par équipe.
 
-## 2. Gestion des performances
+## 2. Relations
+
+### Relation entre `users` et `teams`
+
+- Un **user** appartient à **une seule team** (`many-to-one`).
+- Une **team** peut avoir **plusieurs users** (`one-to-many`).
+
+---
+
+### Relation entre `coin_earnings` et `users`
+
+- Un **coin_earning** est toujours associé à **un user** (`many-to-one`).
+- Un **user** peut avoir **plusieurs coin_earnings** (`one-to-many`).
+
+---
+
+### Relation entre `coin_earnings` et `teams`
+
+- Un **coin_earning** est également lié directement à **une team** (`many-to-one`) pour historiser la contribution même si l’utilisateur change d’équipe plus tard.
+- Une **team** peut avoir **plusieurs coin_earnings** (`one-to-many`).
+
+
+## 3. Gestion des performances
 ### Indexation
 
 - coin_earnings.user_id
@@ -121,3 +143,10 @@ Cependant, dans certains cas où **Prisma ne supporte pas certaines fonctions SQ
 j’ai recours à `prisma.$queryRaw` pour exécuter directement du SQL brut et **laisser la base effectuer le calcul**.  
 Cela permet de conserver des performances élevées tout en profitant de Prisma pour le reste du projet.
 
+### Pagination
+
+Pour éviter de charger trop de données en mémoire et améliorer la performance des endpoints listant des utilisateurs ou des gains,  
+la pagination est appliquée via des paramètres `page` et `pageSize`, elle reste facultatif.  
+
+- Ces paramètres sont **validés** pour éviter des valeurs invalides.
+- Cela réduit la charge sur la base en cas d'un grand nombre de données (scalable).
