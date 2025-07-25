@@ -1,13 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
-interface PaginationButtonsProps {
+interface Props {
   page: number;
   totalPages: number;
   onPageChange: (newPage: number) => void;
 }
 
-export default function PaginationButtons({ page, totalPages, onPageChange }: PaginationButtonsProps) {
+export default function PaginationButtons({ page, totalPages, onPageChange }: Props) {
   const handlePrev = () => {
     if (page > 1) onPageChange(page - 1);
   };

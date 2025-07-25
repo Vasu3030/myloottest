@@ -1,10 +1,10 @@
-interface PaginationInfoProps {
+interface Props {
   startItem: number;
   endItem: number;
   totalItems: number;
 }
 
-export default function PaginationInfo({ startItem, endItem, totalItems }: PaginationInfoProps) {
+export default function PaginationInfo({ startItem, endItem, totalItems }: Props) {
   return (
     <p className="text-sm">
       Showing <span className="font-bold">{startItem}</span> to{' '}

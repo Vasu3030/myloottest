@@ -1,9 +1,9 @@
-interface PageSizeSelectorProps {
+interface Props {
   pageSize: number;
   onPageSizeChange: (newPageSize: number) => void;
 }
 
-export default function PageSizeSelector({ pageSize, onPageSizeChange }: PageSizeSelectorProps) {
+export default function PaginationSelect({ pageSize, onPageSizeChange }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onPageSizeChange(Number(e.target.value));
   };
