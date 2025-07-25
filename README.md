@@ -1,3 +1,34 @@
+# Sommaire
+
+- [Présentation](#présentation)
+- [Instructions et installations](#instructions-et-installations)
+- [Modélisation et Base de Données](#modélisation-et-base-de-données)
+  - [Choix de la structure](#1-choix-de-la-structure)
+  - [Relations](#2-relations)
+- [Gestion des performances](#gestion-des-performances)
+  - [Indexation](#1-indexation)
+  - [Prisma](#2-prisma)
+  - [Pagination](#3-pagination)
+- [API Endpoints](#api-endpoints)
+  - [Get team stats](#1-get-team-stats)
+  - [Get team leaderboard](#2-get-team-leaderboard)
+  - [Get teams](#3-get-teams)
+  - [Get user details](#4-get-user-details)
+  - [Add coin](#5-add-coin)
+
+
+ # Présentation
+
+- Affiche le classement des teams avec leurs infos (nom, nombre de users, nombre de coins total).
+
+- Affiche le classement des users d'une team avec leur contribution en coins, possibilité de mettre un filtre sur la date.
+
+- Affiche les détails d'un user ainsi que sa team
+
+- Possibilité d'ajouter des coins à un user
+
+
+
 # Instructions et installations
 
 ## 1. Cloner le projet et aller dans /server
