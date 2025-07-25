@@ -4,7 +4,7 @@ import ErrorPage from '../components/ErrorPage';
 import Details from "./components/details";
 import TeamSection from "./components/teamSection";
 import { useState } from "react";
-import AddCoinsForm from "./components/AddCoinsForm";
+import AddCoinsForm from "./components/coinsForm";
 
 const UserDetailsView = () => {
   const params = useParams();
@@ -33,7 +33,9 @@ const UserDetailsView = () => {
             {/* Display team section with name */}
             <TeamSection
               id={userInfo.team.id}
-              name={userInfo.team.name} />
+              name={userInfo.team.name}
+              totalCoins={userInfo.team.totalCoins}
+              activeUsers={userInfo.team.activeUsers} />
           </div>
 
           {/* Form to add coins to the user */}

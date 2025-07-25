@@ -40,3 +40,14 @@ export interface ITeamInfoResponse {
     activeUsers: number;
   }[];
 }
+
+export interface ITeamWithUsers {
+  id?: number;
+  name?: string;
+  status?: boolean;
+  users?: {
+    id: number;
+    pseudo: string;
+  }[];
+  totalCoins?: number;
+}

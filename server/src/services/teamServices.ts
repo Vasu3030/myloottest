@@ -1,13 +1,13 @@
 import prisma from '../utils/prismaClient'
-import { ITeamStatsResponse, ITeamsListResponse } from "../type/team"
+import { ITeamStatsResponse, ITeamsListResponse, ITeamWithUsers } from "../type/team"
 import { buildPagination } from '../utils/pagination';
 
 // Get Team by id
-export async function fetchTeamById(teamId: number) {
-  
+export async function fetchTeamById(teamId: number): Promise<ITeamWithUsers | null> {
+
   // Get team information with active users
   const team = await prisma.team.findUnique({
-    where: { id: teamId },
+    where: { id: teamId, status: true },
     select: {
       id: true,
       name: true,
@@ -41,16 +41,21 @@ export async function fetchTeamStats(teamId: number, pageReq: number, pageSizeRe
   const team = await fetchTeamById(teamId);
 
   // Check if team exist or inactif
-  if (!team || team.status === false) {
+  if (!team?.id) {
     return { status: 404, error: "Team not found" };
   }
-  
+
+  // Count active users in the team
   const total = await prisma.user.count({ where: { status: true, teamId: teamId } })
+
   // Create date condition
   const dateCondition = (from && to)
     ? `AND ce."timestamp" BETWEEN $2 AND $3`
     : '';
 
+
+  // Prepare base parameters for the query
+  // If from and to dates are provided, they will be included in the params with finalParams
   const baseParams: any[] = [teamId];
   if (from && to) {
     baseParams.push(from, to);
@@ -61,6 +66,10 @@ export async function fetchTeamStats(teamId: number, pageReq: number, pageSizeRe
 
   const finalParams = [...baseParams, ...paginationParams];
 
+  // Query to get team stats with pagination
+  // This query retrieves the total coins earned by each user in the team
+  // It also calculates the percentage of total coins earned by each user
+  // The results are ordered by the amount earned by each user in descending order
   const result = await prisma.$queryRawUnsafe<{
     userId: number;
     pseudo: string;
@@ -129,6 +138,8 @@ export async function fetchTeamsList(pageReq: number, pageSizeReq: number): Prom
   const total = await prisma.team.count({ where: { status: true } })
   const { params, paginationCondition, page, pageSize } = buildPagination(pageReq, pageSizeReq);
 
+
+  // Query to get the list of teams with their total coins and number of active users
   const result = await prisma.$queryRawUnsafe<{
     id: number
     name: string

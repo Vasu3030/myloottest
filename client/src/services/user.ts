@@ -6,7 +6,9 @@ export interface UserInfoResponse {
   status: boolean,
   team: {
     id: number,
-    name: string
+    name: string,
+    totalCoins: number,
+    activeUsers: number
   },
   earningsSum: number,
   percentage: number

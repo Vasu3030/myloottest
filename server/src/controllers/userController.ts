@@ -10,7 +10,7 @@ export async function getUserInfo(req: Request, res: Response) {
 
         // Call the service to fetch user info
         const data = await fetchUserById(userId)
-
+    
         return res.status(200).json(data)
 
     } catch (error) {
