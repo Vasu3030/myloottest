@@ -34,7 +34,7 @@ const TimelineChart = ({ title, monthInfo, yearInfo, data, offset, setOffset }: 
       <div className="flex items-center gap-2 mb-2">
         <button
           type="button"
-          className="bg-amber-300 text-gray-900 px-2 py-1 rounded font-bold hover:bg-amber-400"
+          className="bg-amber-300 text-gray-900 px-2 py-1 rounded font-bold hover:bg-amber-400 cursor-pointer"
           onClick={() => setOffset(offset - 1)}
         >
           ◀
@@ -42,7 +42,7 @@ const TimelineChart = ({ title, monthInfo, yearInfo, data, offset, setOffset }: 
         <h3 className="text-amber-300">{title} — {monthInfo} {yearInfo}</h3>
         <button
           type="button"
-          className="bg-amber-300 text-gray-900 px-2 py-1 rounded font-bold hover:bg-amber-400 disabled:opacity-50"
+          className="bg-amber-300 text-gray-900 px-2 py-1 rounded font-bold hover:bg-amber-400 cursor-pointer disabled:opacity-50"
           onClick={() => setOffset(offset + 1)}
           disabled={offset === 0}
         >
@@ -50,10 +50,10 @@ const TimelineChart = ({ title, monthInfo, yearInfo, data, offset, setOffset }: 
         </button>
       </div>
       <ResponsiveContainer>
-        <LineChart data={data}>
+        <LineChart data={data} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="day" tickFormatter={d => d.toString()} label={{ value: "Day", position: "insideBottom", offset: -5 }} />
-          <YAxis label={{ value: "Coins", angle: -90, position: "insideLeft" }} />
+          <XAxis dataKey="day"/>
+          <YAxis />
           <Tooltip />
           <Line type="monotone" dataKey="coins" stroke="#8884d8" strokeWidth={2} dot={false} />
         </LineChart>
