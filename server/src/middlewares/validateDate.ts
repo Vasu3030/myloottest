@@ -22,7 +22,7 @@ export function validateDateRange(req: Request, res: Response, next: NextFunctio
         return res.status(400).json({ status: 400, error: 'from date must be earlier than to date' });
     }
 
-    // Stocker les dates validées pour le contrôleur
+    // Attach validated dates to the request object for later use
     (req as any).validatedDates = { from, to };
 
     next();

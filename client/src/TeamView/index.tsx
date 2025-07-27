@@ -1,10 +1,11 @@
 import { useParams } from "react-router-dom"
-import { getTeamStats, getTeamLeaderboard } from '../hooks/teamHooks';
+import { getTeamStats, getTeamLeaderboard, getTeamTimeline } from '../hooks/teamHooks';
 import Pagination from '../components/Pagination';
 import UserRow from "./components/userRow";
 import DateFilter from "./components/dateFilter";
 import ErrorPage from '../components/ErrorPage';
 import TeamHeader from "./components/teamHeader";
+import TimelineChart from "../components/TimelineChart";
 import { useState } from "react";
 import { getRankData } from "../utils/rankUtils";
 
@@ -24,12 +25,26 @@ const TeamView = () => {
     // If no data is found return an error page
     if (!data?.name && !loading) return <ErrorPage message="No teams found" status='400' />;
 
+    const { dataTimeline, loadingTimeline, offset, setOffset } = getTeamTimeline(params.teamId, 0);
+
     return (
         <div className='flex flex-col items-center'>
             {data && data.name && <>
                 {/* Team Header with name and total coins */}
                 <TeamHeader name={data.name} totalCoins={data.totalCoins} />
-                {data.users && data.users.length > 0 &&
+                {/* Timeline chart for team coins over time */}
+                        {dataTimeline && dataTimeline.data && dataTimeline.data.length > 0 && !loadingTimeline && !loading &&
+                            <div className="w-full max-w-4xl mt-6">
+                                <TimelineChart
+                                    title={`Coins per day`}
+                                    data={dataTimeline.data}
+                                    monthInfo={dataTimeline.month}
+                                    yearInfo={dataTimeline.year}
+                                    offset={offset}
+                                    setOffset={setOffset} />
+                            </div>
+                        }
+                {data.users && data.users.length > 0 && !loading && !loadingTimeline &&
                     <>
                         {/* Date filter  */}
                         <div className="my-2">
@@ -56,6 +71,7 @@ const TeamView = () => {
                     </>
                 }
             </>}
+
         </div>
     )
 }

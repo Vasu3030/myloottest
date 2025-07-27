@@ -75,8 +75,12 @@ export async function getTeamLeaderboard(req: Request, res: Response) {
 export async function getTeamTimeline(req: Request, res: Response) {
     try {
         const team = (req as any).team;
-        const offset = Number(req.query.offset) || 0;
+        const offset = Number(req.query.offset);
 
+        // Validate offset value, must be a number and can be 0 or negative
+        if (isNaN(offset) || offset > 0) {
+            return res.status(400).json({ status: 400, error: 'Invalid offset value' });
+        }
         // Calculate the target date based on the offset
         const now = new Date();
         const target = new Date(now.getFullYear(), now.getMonth() + offset, 1);

@@ -36,6 +36,16 @@ export interface TeamStatsResponse {
   users?: User[];
 }
 
+export interface TeamTimelineDataResponse {
+  status: number;
+  month: string;
+  year: number;
+  data: {
+    day: number;
+    coins: number;
+  }[];
+}
+
 // API Team list
 export const fetchTeams = (page = 1, pageSize = 10) =>
   apiFetch(`/teams?page=${page}&pageSize=${pageSize}`);
@@ -47,3 +57,7 @@ export const fetchTeamStats = (teamId: string, page = 1, pageSize = 10) =>
 // API Team leaderboard with date filter
 export const fetchTeamLeaderboard = (teamId: string, dateFilter: string, page = 1, pageSize = 10) =>
   apiFetch(`/teams/${teamId}/leaderboard?${dateFilter}&page=${page}&pageSize=${pageSize}`);
+
+// API Team timeline data
+export const fetchTeamTimeline = (teamId: string, offset: number) =>
+  apiFetch(`/teams/${teamId}/timeline?offset=${offset}`);

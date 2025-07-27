@@ -17,7 +17,7 @@ export async function validateTeamId(req: Request, res: Response, next: NextFunc
         return res.status(404).json({ status: 404, error: 'Team not Found' });
     }
 
-    // Attache éventuellement la team trouvée à la requête pour éviter une 2ème requête plus tard
+    // Attach validated dates to the request object for later use
     (req as any).team = team;
 
     next();
