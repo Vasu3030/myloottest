@@ -51,3 +51,13 @@ export interface ITeamWithUsers {
   }[];
   totalCoins?: number;
 }
+
+export interface ITeamTimelineResponse {
+  status: number;
+  month: string;
+  year: number;
+  data: {
+    day: number;
+    coins: number;
+  }[];
+}

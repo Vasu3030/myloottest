@@ -19,6 +19,6 @@ router.get('/:id/stats', validateTeamId, validatePagination, getTeamStats)
 router.get('/:id/leaderboard', validateTeamId, validatePagination, validateDateRange, getTeamLeaderboard) 
 
 // Get team gains during a specific period for chart
-router.get('/:id/timeline', validateTeamId, validateDateRange, getTeamTimeline) 
+router.get('/:id/timeline', validateTeamId, getTeamTimeline) 
 
 export default router
