@@ -18,6 +18,8 @@
 
 - Affiche le classement des users d'une team avec leur contribution en coins, possibilité de mettre un filtre sur la date.
 
+- Visualition avec graphique des gains par jour d'une team pour chaque mois.
+
 - Affiche les détails d'un user ainsi que sa team
 
 - Possibilité d'ajouter des coins à un user
@@ -318,14 +320,14 @@ la pagination est appliquée via des paramètres `page` et `pageSize`, ils reste
 - **URL**: `http://localhost:3000/users/{userId}`
     
 
-### Response
+### Réponse
 
 - **Status Code**: 200 OK
     
 - **Content-Type**: application/json
     
 
-#### Response JSON
+#### Réponse JSON
 
 ``` json
 {
@@ -391,6 +393,41 @@ la pagination est appliquée via des paramètres `page` et `pageSize`, ils reste
     "amount": number,
     "timestamp": Date
   }
+}
+
+ ```
+
+ ## 6. Coins gagné par jour d'une team (par mois)
+
+- **Method:** GET
+    
+- **URL:** `http://localhost:3000/teams/1/timeline`
+    
+- **Query Parameters:**
+    
+    - `offset` (number) <= 0
+        
+        
+
+### Réponse
+
+- **Status Code**: 200 OK
+    
+- **Content-Type**: application/json
+
+#### Réponse JSON
+
+``` json
+{
+  "status": number,
+  "month": string,
+  "year": number,
+  "data": [
+    {
+      "day": number,
+      "coins": number
+    }
+  ]
 }
 
  ```
